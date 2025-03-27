@@ -94,16 +94,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function changeQuantity(button, change) {
     const quantityDisplay = button.parentElement.querySelector('.quantity-display');
-    const currentQuantity = parseInt(quantityDisplay.textContent);
+    const currentQuantity = parseInt(quantityDisplay.textContent) || 0;
     const newQuantity = Math.max(0, currentQuantity + change);
     quantityDisplay.textContent = newQuantity;
 
-    updateCart(button.closest('.menu-item'), newQuantity);
+    const menuItem = button.closest('.menu-item');
+    if (menuItem) {
+      updateCart(menuItem, newQuantity);
+    }
   }
 
   function updateCart(menuItem, quantity) {
     const cartItems = document.getElementById('cartItems');
-    const itemName = menuItem.querySelector('h3').textContent;
+    const itemName = menuItem.querySelector('h3').textContent.trim();
     const weightSelect = menuItem.querySelector('.pickle-quantity');
     const selectedWeight = weightSelect ? weightSelect.value : 'Single';
     const priceMap = {
@@ -113,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     const basePrice = selectedWeight in priceMap
       ? priceMap[selectedWeight]
-      : parseInt(menuItem.querySelector('.text-food-yellow').textContent.replace('₹', ''));
+      : parseInt(menuItem.querySelector('.text-food-yellow').textContent.replace('₹', '')) || 0;
     const totalPrice = basePrice * quantity;
 
     let cartItem = Array.from(cartItems.children).find(
@@ -127,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cartItem = document.createElement('div');
         cartItem.dataset.name = itemName;
         cartItem.dataset.weight = selectedWeight;
+        cartItem.className = "flex justify-between items-center border-b pb-2";
         cartItems.appendChild(cartItem);
       }
       cartItem.textContent = `${itemName} (${selectedWeight}): ₹${totalPrice} (${quantity}x)`;
@@ -176,14 +180,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function placeOrder() {
+    const cartItems = document.getElementById('cartItems');
+    if (!cartItems.children.length) {
+      alert("Your cart is empty. Please add items to place an order.");
+      return;
+    }
+
     let orderMessage = "Order Details:\n";
     let totalPrice = 0;
 
-    for (const [itemName, { quantity, price }] of Object.entries(cart)) {
-      const itemTotal = quantity * price;
+    Array.from(cartItems.children).forEach(item => {
+      const itemName = item.dataset.name;
+      const itemWeight = item.dataset.weight || 'Single';
+      const quantityMatch = item.textContent.match(/\((\d+)x\)/);
+      const priceMatch = item.textContent.match(/₹(\d+)/);
+
+      const quantity = quantityMatch ? parseInt(quantityMatch[1]) : 0;
+      const itemTotal = priceMatch ? parseInt(priceMatch[1]) : 0;
+
       totalPrice += itemTotal;
-      orderMessage += `${itemName} x ${quantity} - ₹${itemTotal}\n`;
-    }
+      orderMessage += `${itemName} (${itemWeight}) x ${quantity} - ₹${itemTotal}\n`;
+    });
 
     orderMessage += `\nTotal: ₹${totalPrice}`;
     const encodedMessage = encodeURIComponent(orderMessage);
