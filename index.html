@@ -20,7 +20,7 @@
         theme: {
           extend: {
             colors: {
-              "food-yellow": "#F9B208",
+              "food-yellow": "#FFD700", // Updated to bright yellow
             },
             fontFamily: {
               sans: ["Montserrat", "sans-serif"],
@@ -87,7 +87,7 @@
       /* Navbar CTA button styles */
       .nav-cta-btn {
         background-color: white;
-        color: #f9b208;
+        color: #FFD700; /* Updated to bright yellow */
         padding: 0.5rem 1rem;
         border-radius: 9999px;
         font-weight: 600;
@@ -95,7 +95,7 @@
       }
 
       .nav-cta-btn:hover {
-        background-color: #f8f8f8;
+        background-color: #FFF8DC; /* Slightly lighter hover effect */
         transform: translateY(-1px);
       }
 
@@ -116,18 +116,28 @@
         margin-top: 10px;
       }
       .quantity-btn {
-        width: 30px;
-        height: 30px;
+        width: 36px; /* Slightly larger for better usability */
+        height: 36px;
+        font-size: 1rem; /* Adjusted font size */
         background-color: #f9b208;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        border-radius: 8px; /* Added rounded corners */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
+
+      .quantity-btn:hover {
+        transform: scale(1.1); /* Slight hover scale effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow on hover */
+      }
+
       .quantity-display {
-        margin: 0 10px;
+        margin: 0 12px; /* Adjusted spacing */
         font-weight: bold;
+        font-size: 1rem; /* Adjusted font size */
       }
 
       @keyframes pulse {
@@ -140,6 +150,99 @@
         100% {
           transform: scale(1);
         }
+      }
+
+      /* Enhanced button hover effects */
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Improved cart modal design */
+      #cartModal {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Add subtle hover effect for menu items */
+      .menu-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Enhanced View Cart button */
+      .view-cart-btn {
+        background-color: #FFD700; /* Updated to bright yellow */
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .view-cart-btn:hover {
+        background-color: #FFC107; /* Slightly darker hover effect */
+      }
+
+      /* Updated light yellow color */
+      :root {
+        --light-food-yellow: #FFE066; /* Updated lighter yellow */
+      }
+
+      /* Update all references to the new light yellow */
+      .bg-food-yellow {
+        background-color: var(--light-food-yellow);
+      }
+
+      .text-food-yellow {
+        color: var(--light-food-yellow);
+        font-size: 1.125rem; /* Increased font size for price */
+        font-weight: bold;
+      }
+
+      .border-food-yellow {
+        border-color: var(--light-food-yellow);
+      }
+
+      /* Improved close button hover effect */
+      .cart-modal-close-btn {
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+
+      .cart-modal-close-btn:hover {
+        transform: scale(1.2);
+        color: var(--light-food-yellow); /* Updated hover effect */
+      }
+
+      .pickle-quantity {
+        border: 2px solid var(--light-food-yellow);
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        color: #333;
+        background-color: #fff;
+        transition: all 0.3s ease;
+      }
+
+      .pickle-quantity:hover {
+        border-color: #f9b208;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .pickle-quantity:focus {
+        outline: none;
+        border-color: #f9b208;
+        box-shadow: 0 0 0 3px rgba(249, 178, 8, 0.3);
       }
     </style>
   </head>
@@ -194,12 +297,18 @@
             </ul>
           </nav>
 
-          <!-- View Cart Button -->
+          <!-- Enhanced View Cart Button -->
           <button
             onclick="toggleCartModal()"
-            class="bg-white text-food-yellow px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition tracking-wide text-sm"
+            class="relative bg-white text-food-yellow px-4 py-2 rounded-full font-medium hover:bg-gray-100 transition tracking-wide text-sm shadow-md"
           >
-            View Cart
+            <i class="fas fa-shopping-cart mr-2"></i>View Cart
+            <span
+              id="cartQuantityBadge"
+              class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden shadow-lg"
+            >
+              0
+            </span>
           </button>
         </div>
       </div>
@@ -341,6 +450,7 @@
           <div
             class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
             data-category="oliga"
+            data-id="oliga-normal"
           >
             <img
               src="images/oliga.webp"
@@ -351,7 +461,7 @@
               <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                 Chenikkaya Normal Oliga
               </h3>
-              <span class="text-food-yellow font-bold text-xs md:text-base"
+              <span class="text-food-yellow font-bold text-[16px] md:text-base"
                 >₹30</span
               >
               <div class="quantity-control">
@@ -369,6 +479,7 @@
           <div
             class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
             data-category="oliga"
+            data-id="oliga-ghee"
           >
             <img
               src="images/oliga.webp"
@@ -379,7 +490,7 @@
               <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                 Chenikkaya Ghee Oliga
               </h3>
-              <span class="text-food-yellow font-bold text-xs md:text-base"
+              <span class="text-food-yellow font-bold text-[16px] md:text-base"
                 >₹40</span
               >
               <div class="quantity-control">
@@ -397,6 +508,7 @@
           <div
             class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
             data-category="oliga"
+            data-id="oliga-small"
           >
             <img
               src="images/small-size-oliga.webp"
@@ -407,7 +519,7 @@
               <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                 Small Size Oliga
               </h3>
-              <span class="text-food-yellow font-bold text-xs md:text-base"
+              <span class="text-food-yellow font-bold text-[16px] md:text-base"
                 >₹10</span
               >
               <div class="quantity-control">
@@ -423,51 +535,23 @@
           </div>
 
           <!-- Non-Veg Pickle Section -->
-          <div
-            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
-            data-category="non-veg-pickle"
-          >
-            <img
-              src="images/chicken-pickle.webp"
-              alt="Chicken Pickle"
-              class="w-full h-28 md:h-40 object-cover"
-            />
+          <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full" data-category="non-veg-pickle" data-id="chicken-pickle">
+            <img src="images/chicken-pickle.webp" alt="Chicken Pickle" class="w-full h-28 md:h-40 object-cover" />
             <div class="p-2 md:p-4 text-center">
-              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
-                Chicken Pickle
-              </h3>
-              <div class="flex justify-center space-x-2 mb-2">
-                <span class="text-food-yellow font-bold text-xs md:text-base"
-                  >250g: ₹250</span
-                >
-                <span class="text-food-yellow font-bold text-xs md:text-base"
-                  >500g: ₹450</span
-                >
-                <span class="text-food-yellow font-bold text-xs md:text-base"
-                  >1kg: ₹850</span
-                >
-              </div>
-              <div class="flex justify-center space-x-2">
-                <select class="pickle-quantity border rounded px-2 py-1">
-                  <option value="250g">250g</option>
-                  <option value="500g">500g</option>
-                  <option value="1kg">1kg</option>
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">Chicken Pickle</h3>
+              <!-- Dropdown for weight and price -->
+              <div class="mb-2">
+                <select class="pickle-quantity w-full md:w-auto" onchange="handleWeightChange(this)">
+                  <option value="250g" data-price="250">250g - ₹250</option>
+                  <option value="500g" data-price="450">500g - ₹450</option>
+                  <option value="1kg" data-price="850">1kg - ₹850</option>
                 </select>
-                <div class="quantity-control">
-                  <button
-                    class="quantity-btn"
-                    onclick="changeQuantity(this, -1)"
-                  >
-                    -
-                  </button>
-                  <span class="quantity-display">0</span>
-                  <button
-                    class="quantity-btn"
-                    onclick="changeQuantity(this, 1)"
-                  >
-                    +
-                  </button>
-                </div>
+              </div>
+              <!-- Quantity control -->
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">-</button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">+</button>
               </div>
             </div>
           </div>
@@ -478,6 +562,7 @@
           <div
             class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
             data-category="sweets"
+            data-id="chenikkaya-kajjikayalu"
           >
             <img
               src="images/chenikkaya-kajjikayalu.webp"
@@ -488,8 +573,8 @@
               <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                 Chenikkaya Kajjikayalu
               </h3>
-              <span class="text-food-yellow font-bold text-xs md:text-base"
-                >₹10 each</span
+              <span class="text-food-yellow font-bold text-[16px] md:text-base"
+                >₹10</span
               >
               <div class="quantity-control">
                 <button class="quantity-btn" onclick="changeQuantity(this, -1)">
@@ -506,13 +591,14 @@
           <!-- Other items in similar structure -->
         </div>
 
-        <!-- Order Button -->
-        <div class="text-center mt-8">
+        <!-- Centered View Cart Button under Menu Section -->
+        <div class="flex justify-center mt-8">
           <button
             onclick="toggleCartModal()"
-            class="bg-food-yellow text-white px-8 py-3 rounded-full font-medium hover:bg-yellow-500 transition tracking-wide text-lg"
+            class="view-cart-btn flex items-center justify-center space-x-2"
           >
-            View Cart
+            <i class="fas fa-shopping-cart"></i>
+            <span>View Cart</span>
           </button>
         </div>
       </div>
@@ -613,16 +699,16 @@
     <!-- Cart Modal -->
     <div id="cartModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-6 relative">
-        <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+        <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 cart-modal-close-btn">
           <i class="fas fa-times text-xl"></i>
         </button>
-        <h3 class="text-xl font-bold mb-4">Your Cart</h3>
+        <h3 class="text-xl font-bold mb-4 text-center text-food-yellow">Your Cart</h3>
         <div id="cartItems" class="space-y-4">
           <!-- Cart items will be dynamically added here -->
         </div>
         <div class="flex justify-between items-center mt-6">
-          <span id="totalPrice" class="text-lg font-bold">Total: ₹0</span>
-          <button onclick="placeOrder()" class="bg-food-yellow text-white px-6 py-2 rounded-full font-medium hover:bg-yellow-500 transition">
+          <span id="totalPrice" class="text-lg font-bold text-gray-800">Total: ₹0</span>
+          <button onclick="placeOrder()" class="bg-food-yellow text-white px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition">
             Place Order on WhatsApp
           </button>
         </div>
