@@ -73,22 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Mobile menu toggle
-  const mobileMenuButton = document.getElementById("mobile-menu-button");
-  const mobileMenu = document.getElementById("mobile-menu");
-
-  mobileMenuButton.addEventListener("click", function () {
-    mobileMenu.classList.toggle("hidden");
-  });
-
-  // Close menu when clicking on a link
-  const mobileLinks = mobileMenu.querySelectorAll("a");
-  mobileLinks.forEach((link) => {
-    link.addEventListener("click", function () {
-      mobileMenu.classList.add("hidden");
-    });
-  });
-
   // Cart functionality
   const cart = {};
 
@@ -152,64 +136,12 @@ document.addEventListener("DOMContentLoaded", function () {
     totalPriceElement.textContent = `Total: ₹${total}`;
   }
 
-  function updateCartModal() {
-    const cartItemsContainer = document.getElementById("cartItems");
-    const totalPriceElement = document.getElementById("totalPrice");
-    cartItemsContainer.innerHTML = "";
-    let totalPrice = 0;
-
-    for (const [itemName, { quantity, price }] of Object.entries(cart)) {
-      const itemTotal = quantity * price;
-      totalPrice += itemTotal;
-
-      const cartItem = document.createElement("div");
-      cartItem.className = "flex justify-between items-center border-b pb-2";
-      cartItem.innerHTML = `
-        <span>${itemName} x ${quantity}</span>
-        <span>₹${itemTotal}</span>
-      `;
-      cartItemsContainer.appendChild(cartItem);
-    }
-
-    totalPriceElement.textContent = `Total: ₹${totalPrice}`;
-  }
-
   function toggleCartModal() {
     const cartModal = document.getElementById("cartModal");
     cartModal.classList.toggle("hidden");
   }
 
-  function placeOrder() {
-    const cartItems = document.getElementById('cartItems');
-    if (!cartItems.children.length) {
-      alert("Your cart is empty. Please add items to place an order.");
-      return;
-    }
-
-    let orderMessage = "Order Details:\n";
-    let totalPrice = 0;
-
-    Array.from(cartItems.children).forEach(item => {
-      const itemName = item.dataset.name;
-      const itemWeight = item.dataset.weight || 'Single';
-      const quantityMatch = item.textContent.match(/\((\d+)x\)/);
-      const priceMatch = item.textContent.match(/₹(\d+)/);
-
-      const quantity = quantityMatch ? parseInt(quantityMatch[1]) : 0;
-      const itemTotal = priceMatch ? parseInt(priceMatch[1]) : 0;
-
-      totalPrice += itemTotal;
-      orderMessage += `${itemName} (${itemWeight}) x ${quantity} - ₹${itemTotal}\n`;
-    });
-
-    orderMessage += `\nTotal: ₹${totalPrice}`;
-    const encodedMessage = encodeURIComponent(orderMessage);
-    const whatsappUrl = `https://wa.me/916301972788?text=${encodedMessage}`;
-    window.open(whatsappUrl, "_blank");
-  }
-
   // Expose functions globally
   window.changeQuantity = changeQuantity;
   window.toggleCartModal = toggleCartModal;
-  window.placeOrder = placeOrder;
 });
