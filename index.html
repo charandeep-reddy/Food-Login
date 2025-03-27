@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Login - Homemade Telugu Food</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "food-yellow": "#F9B208",
+            },
+            fontFamily: {
+              sans: ["Montserrat", "sans-serif"],
+              serif: ["Lora", "serif"],
+            },
+            letterSpacing: {
+              wider: ".05em",
+              widest: ".1em",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Lora", serif;
+        line-height: 1.2;
+      }
+
+      .menu-item h3 {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      .scroll-top-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 99;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .scroll-top-btn.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .sticky-order-btn {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 98;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .sticky-order-btn {
+          display: block;
+        }
+
+        .scroll-top-btn {
+          bottom: 70px;
+        }
+      }
+
+      /* Navbar CTA button styles */
+      .nav-cta-btn {
+        background-color: white;
+        color: #f9b208;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .nav-cta-btn:hover {
+        background-color: #f8f8f8;
+        transform: translateY(-1px);
+      }
+
+      .nav-cta-btn i {
+        margin-right: 0.25rem;
+      }
+
+      /* Highlighted CTA button */
+      .highlight-cta {
+        box-shadow: 0 4px 20px rgba(249, 178, 8, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .quantity-btn {
+        width: 30px;
+        height: 30px;
+        background-color: #f9b208;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .quantity-display {
+        margin: 0 10px;
+        font-weight: bold;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-white text-gray-800">
+    <!-- Header -->
+    <header class="bg-food-yellow shadow-md sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-4 flex items-center justify-between"
+      >
+        <div class="flex items-center">
+          <h1 class="text-2xl md:text-3xl font-bold text-white tracking-wide">
+            Food Login
+          </h1>
+          <span
+            class="ml-2 bg-white text-food-yellow px-2 py-1 rounded-full text-xs font-bold"
+            >22K</span
+          >
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <!-- Desktop Navigation with single CTA Button -->
+          <nav class="hidden md:block">
+            <ul class="flex items-center space-x-6">
+              <li>
+                <a
+                  href="#home"
+                  class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#menu"
+                  class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >Menu</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  class="text-white hover:text-gray-200 font-medium tracking-wide text-sm uppercase"
+                  >Contact</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/916301972788?text=Hi,%20I%20would%20like%20to%20place%20an%20order"
+                  target="_blank"
+                  class="nav-cta-btn flex items-center whitespace-nowrap highlight-cta"
+                >
+                  <i class="fab fa-whatsapp"></i> Order Now
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- Mobile menu button -->
+          <button
+            id="mobile-menu-button"
+            class="md:hidden text-white focus:outline-none"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu" class="md:hidden hidden bg-food-yellow/95 pb-4">
+        <nav class="container mx-auto px-4">
+          <ul class="space-y-3">
+            <li>
+              <a
+                href="#home"
+                class="block text-white hover:text-gray-200 font-medium py-2 border-b border-white/20 tracking-wide text-sm uppercase"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a
+                href="#about"
+                class="block text-white hover:text-gray-200 font-medium py-2 border-b border-white/20 tracking-wide text-sm uppercase"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="#menu"
+                class="block text-white hover:text-gray-200 font-medium py-2 border-b border-white/20 tracking-wide text-sm uppercase"
+                >Menu</a
+              >
+            </li>
+            <li>
+              <a
+                href="#contact"
+                class="block text-white hover:text-gray-200 font-medium py-2 tracking-wide text-sm uppercase"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section
+      id="home"
+      class="py-16 bg-gradient-to-b from-food-yellow/20 to-white"
+    >
+      <div
+        class="container mx-auto px-4 flex flex-col md:flex-row items-center"
+      >
+        <div class="md:w-1/2 mb-10 md:mb-0">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Tasty Homemade <span class="text-food-yellow">Telugu Food</span>
+          </h2>
+          <p class="text-lg mb-8 text-gray-700 font-light leading-relaxed">
+            We make fresh, homemade Telugu food with love. Order now for a taste
+            of authentic Rayalaseema flavours
+          </p>
+          <div
+            class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4"
+          >
+            <a
+              href="#menu"
+              class="bg-food-yellow text-white px-6 py-3 rounded-full font-medium hover:bg-yellow-500 transition text-center tracking-wide"
+            >
+              <i class="fas fa-utensils mr-2"></i>View Our Menu
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2">
+          <img
+            src="https://i.ibb.co/Jj9nXKL/south-indian-food.jpg"
+            alt="Telugu Food display"
+            class="rounded-lg shadow-lg w-full"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative">
+          <span class="relative inline-block">
+            About Food Login
+            <span
+              class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+            ></span>
+          </span>
+        </h2>
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/3 mb-8 md:mb-0">
+            <img
+              src="https://i.ibb.co/Qf7Lvb3/indian-chef.jpg"
+              alt="Home Chef"
+              class="rounded-full w-64 h-64 object-cover mx-auto border-4 border-food-yellow"
+            />
+          </div>
+          <div class="md:w-2/3 md:pl-12">
+            <p class="text-lg mb-6 leading-relaxed">
+              Hello food lovers! We are a family-run home food business from
+              Andhra Pradesh. We make tasty Telugu food with fresh ingredients
+              and traditional recipes.
+            </p>
+            <p class="text-lg mb-6 leading-relaxed">
+              With over 22,000 followers on Instagram, we share our love for
+              Telugu cuisine. We make everything from spicy Andhra meals to
+              sweet Telangana treats.
+            </p>
+            <p class="text-lg leading-relaxed">
+              Our goal is simple: to bring the authentic taste of Telugu home
+              cooking to your doorstep!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 relative">
+          <span class="relative inline-block">
+            Our Menu
+            <span
+              class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+            ></span>
+          </span>
+        </h2>
+        <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+          Try our homemade Telugu dishes made with love and traditional recipes.
+        </p>
+
+        <!-- Menu Categories -->
+        <div class="mb-8 flex justify-center">
+          <div class="flex overflow-x-auto pb-2 space-x-2 no-scrollbar">
+            <button
+              class="menu-category-btn active whitespace-nowrap px-4 py-2 bg-food-yellow text-white rounded-full font-medium tracking-wide text-sm"
+              data-category="all"
+            >
+              All Items
+            </button>
+            <button
+              class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+              data-category="oliga"
+            >
+              Oliga
+            </button>
+            <button
+              class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+              data-category="non-veg-pickle"
+            >
+              Non-Veg Pickle
+            </button>
+            <button
+              class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+              data-category="sweets"
+            >
+              Sweets
+            </button>
+            <button
+              class="menu-category-btn whitespace-nowrap px-4 py-2 bg-white border border-food-yellow text-food-yellow rounded-full font-medium tracking-wide text-sm"
+              data-category="pickles-podulu"
+            >
+              Pickles & Podulu
+            </button>
+          </div>
+        </div>
+
+        <!-- Menu Items Grid -->
+        <div
+          id="menu-items"
+          class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-6xl mx-auto"
+        >
+          <!-- Oliga Section -->
+          <div
+            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+            data-category="oliga"
+          >
+            <img
+              src="images/oliga.webp"
+              alt="Chenikkaya Normal Oliga"
+              class="w-full h-28 md:h-40 object-cover"
+            />
+            <div class="p-2 md:p-4 text-center">
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                Chenikkaya Normal Oliga
+              </h3>
+              <span class="text-food-yellow font-bold text-xs md:text-base"
+                >₹30</span
+              >
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">
+                  -
+                </button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+            data-category="oliga"
+          >
+            <img
+              src="images/oliga.webp"
+              alt="Chenikkaya Ghee Oliga"
+              class="w-full h-28 md:h-40 object-cover"
+            />
+            <div class="p-2 md:p-4 text-center">
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                Chenikkaya Ghee Oliga
+              </h3>
+              <span class="text-food-yellow font-bold text-xs md:text-base"
+                >₹40</span
+              >
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">
+                  -
+                </button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+            data-category="oliga"
+          >
+            <img
+              src="images/small-size-oliga.webp"
+              alt="Small Size Oliga"
+              class="w-full h-28 md:h-40 object-cover"
+            />
+            <div class="p-2 md:p-4 text-center">
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                Small Size Oliga
+              </h3>
+              <span class="text-food-yellow font-bold text-xs md:text-base"
+                >₹10</span
+              >
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">
+                  -
+                </button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Non-Veg Pickle Section -->
+          <div
+            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+            data-category="non-veg-pickle"
+          >
+            <img
+              src="images/chicken-pickle.webp"
+              alt="Chicken Pickle"
+              class="w-full h-28 md:h-40 object-cover"
+            />
+            <div class="p-2 md:p-4 text-center">
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                Chicken Pickle
+              </h3>
+              <div class="flex justify-center space-x-2 mb-2">
+                <span class="text-food-yellow font-bold text-xs md:text-base"
+                  >250g: ₹250</span
+                >
+                <span class="text-food-yellow font-bold text-xs md:text-base"
+                  >500g: ₹450</span
+                >
+                <span class="text-food-yellow font-bold text-xs md:text-base"
+                  >1kg: ₹850</span
+                >
+              </div>
+              <div class="flex justify-center space-x-2">
+                <select class="pickle-quantity border rounded px-2 py-1">
+                  <option value="250g">250g</option>
+                  <option value="500g">500g</option>
+                  <option value="1kg">1kg</option>
+                </select>
+                <div class="quantity-control">
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
+                  <span class="quantity-display">0</span>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Similar structure for other non-veg pickles -->
+
+          <!-- Sweets Section -->
+          <div
+            class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+            data-category="sweets"
+          >
+            <img
+              src="images/chenikkaya-kajjikayalu.webp"
+              alt="Chenikkaya Kajjikayalu"
+              class="w-full h-28 md:h-40 object-cover"
+            />
+            <div class="p-2 md:p-4 text-center">
+              <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
+                Chenikkaya Kajjikayalu
+              </h3>
+              <span class="text-food-yellow font-bold text-xs md:text-base"
+                >₹10 each</span
+              >
+              <div class="quantity-control">
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">
+                  -
+                </button>
+                <span class="quantity-display">0</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other items in similar structure -->
+        </div>
+
+        <!-- Order Button -->
+        <div class="text-center mt-8">
+          <button
+            onclick="toggleCartModal()"
+            class="bg-food-yellow text-white px-8 py-3 rounded-full font-medium hover:bg-yellow-500 transition tracking-wide text-lg"
+          >
+            View Cart
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative">
+          <span class="relative inline-block">
+            Ready to Order?
+            <span
+              class="absolute bottom-0 left-0 w-full h-1 bg-food-yellow"
+            ></span>
+          </span>
+        </h2>
+        <div
+          class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8 text-center"
+        >
+          <h3 class="text-xl font-bold mb-4">Contact Information</h3>
+          <p class="mb-6 text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            Get in touch with us to place your order or ask any questions
+          </p>
+
+          <div
+            class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 mb-8"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-phone text-food-yellow text-xl w-8"></i>
+              <a href="tel:+916301972788" class="hover:text-food-yellow"
+                >+91 6301972788</a
+              >
+            </div>
+            <div class="flex items-center">
+              <i class="fab fa-instagram text-food-yellow text-xl w-8"></i>
+              <a
+                href="https://www.instagram.com/foodlogin_8"
+                target="_blank"
+                class="hover:text-food-yellow"
+                >@foodlogin_8</a
+              >
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <a
+              href="https://wa.me/916301972788?text=Hi,%20I%20would%20like%20to%20place%20an%20order"
+              target="_blank"
+              class="inline-block bg-food-yellow text-white px-8 py-4 rounded-full font-medium hover:bg-yellow-500 transition tracking-wide text-lg highlight-cta"
+            >
+              <i class="fab fa-whatsapp mr-2"></i> Order via WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-food-yellow py-4">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-3 md:mb-0">
+            <h2 class="text-xl font-bold text-white tracking-wide">
+              Food Login
+            </h2>
+            <p class="text-white/80 text-sm mt-1">
+              Homemade Telugu food with love
+            </p>
+          </div>
+
+          <div class="flex space-x-4">
+            <a
+              href="https://www.instagram.com/foodlogin_8"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://www.youtube.com/@foodlogin_8"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a
+              href="https://wa.me/916301972788"
+              target="_blank"
+              class="text-white hover:text-gray-200 text-xl"
+            >
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="border-t border-white/20 mt-3 pt-3 text-center">
+          <p class="text-white/80 text-xs tracking-wide">
+            © 2023 Food Login. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 p-6 relative">
+        <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3 class="text-xl font-bold mb-4">Your Cart</h3>
+        <div id="cartItems" class="space-y-4">
+          <!-- Cart items will be dynamically added here -->
+        </div>
+        <div class="flex justify-between items-center mt-6">
+          <span id="totalPrice" class="text-lg font-bold">Total: ₹0</span>
+          <button onclick="placeOrder()" class="bg-food-yellow text-white px-6 py-2 rounded-full font-medium hover:bg-yellow-500 transition">
+            Place Order on WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button
+      id="scrollTopBtn"
+      class="scroll-top-btn bg-food-yellow text-white p-3 rounded-full shadow-lg"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Add JavaScript for back to top button -->
+    <script src="scripts.js"></script>
+  </body>
+</html>
