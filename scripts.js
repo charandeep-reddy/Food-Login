@@ -243,7 +243,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function toggleCartModal() {
     const cartModal = document.getElementById("cartModal");
+    const mainContent = document.getElementById("mainContent");
     cartModal.classList.toggle("hidden");
+    mainContent.classList.toggle("active");
   }
 
   function placeOrder() {
@@ -268,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         orderMessage += `${index + 1}. ${name}${weight ? ` (${weight})` : ''} x ${quantity} = ₹${itemTotal}\n`;
       });
 
-      orderMessage += `\n*Total Amount: ₹${totalPrice}*\n\nThank you for ordering!`;
+      orderMessage += `\n*Total Amount: ₹${totalPrice}*`;
       const encodedMessage = encodeURIComponent(orderMessage);
       window.open(`https://wa.me/916301972788?text=${encodedMessage}`, "_blank");
     } catch (error) {
