@@ -51,20 +51,6 @@
         font-family: "Montserrat", sans-serif;
       }
 
-      .scroll-top-btn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 99;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-      }
-      .scroll-top-btn.show {
-        opacity: 1;
-        visibility: visible;
-      }
-
       .sticky-order-btn {
         position: fixed;
         bottom: 0;
@@ -77,10 +63,6 @@
       @media (max-width: 768px) {
         .sticky-order-btn {
           display: block;
-        }
-
-        .scroll-top-btn {
-          bottom: 70px;
         }
       }
 
@@ -162,6 +144,7 @@
       #cartModal {
         animation: fadeIn 0.3s ease-in-out;
         backdrop-filter: blur(8px);
+        overflow-y: auto;
       }
 
       @keyframes fadeIn {
@@ -173,6 +156,14 @@
           opacity: 1;
           transform: scale(1);
         }
+      }
+
+      /* Modal body scroll handling */
+      body.modal-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
       }
 
       /* Add subtle hover effect for menu items */
@@ -265,6 +256,11 @@
       .navbar-logo img:hover {
         transform: scale(1.1); /* Slight zoom effect on hover */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+      }
+
+      /* Remove the scroll-top-btn styles */
+      .scroll-top-btn {
+        display: none; /* Hide the button instead of removing the style completely */
       }
     </style>
   </head>
@@ -881,14 +877,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Back to Top Button -->
-    <button
-      id="scrollTopBtn"
-      class="scroll-top-btn bg-food-yellow text-white p-3 rounded-full shadow-lg"
-    >
-      <i class="fas fa-arrow-up"></i>
-    </button>
 
     <!-- Add JavaScript for back to top button -->
     <script src="scripts.js"></script>

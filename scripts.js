@@ -1,5 +1,6 @@
-// Back to Top Button
 document.addEventListener("DOMContentLoaded", function () {
+  // Remove scroll top button functionality
+  /* 
   const scrollTopBtn = document.getElementById("scrollTopBtn");
 
   // Show/hide button based on scroll position
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
       behavior: "smooth",
     });
   });
+  */
 
   // Menu Filtering
   const categoryButtons = document.querySelectorAll(".menu-category-btn");
@@ -114,9 +116,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // Ensure the delete button is always functional for Small Size Oliga
       if (isSmallSizeOliga) {
         const decrementButton = button.parentElement.querySelector('.quantity-btn:first-child');
-        decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
-        decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
-        decrementButton.onclick = () => deleteSmallOliga(decrementButton);
+        if (decrementButton) {
+          decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
+          decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
+          decrementButton.onclick = () => deleteSmallOliga(decrementButton);
+        }
       }
 
       updateCart(menuItem, newQuantity);
@@ -163,8 +167,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (weightSelect) {
         // For items with weight selection (pickles)
         const selectedOption = weightSelect.options[weightSelect.selectedIndex];
-        const priceMatch = selectedOption.textContent.match(/₹(\d+)/);
-        basePrice = priceMatch ? parseInt(priceMatch[1]) : 0;
+        if (selectedOption) {
+          const priceMatch = selectedOption.textContent.match(/₹(\d+)/);
+          basePrice = priceMatch ? parseInt(priceMatch[1]) : 0;
+        } else {
+          basePrice = 0;
+        }
       } else {
         // For regular items
         const priceText = menuItem.querySelector('.text-food-yellow')?.textContent;
@@ -198,11 +206,14 @@ document.addEventListener("DOMContentLoaded", function () {
           cartItem.dataset.basePrice = basePrice;
           cartItem.dataset.quantity = quantity;
           cartItem.className = "grid grid-cols-4 items-center border-b pb-2";
+        } else {
+          // Update existing item data
+          cartItem.dataset.basePrice = basePrice;
+          cartItem.dataset.quantity = quantity;
         }
 
-        cartItem.dataset.quantity = quantity;
         cartItem.innerHTML = `
-          <span class="font-semibold">${itemName}${selectedWeight ? ` (${selectedWeight})` : ''}</span>
+          <span class="font-semibold">${itemName}${selectedWeight !== 'Single' ? ` (${selectedWeight})` : ''}</span>
           <span class="text-center font-semibold">${quantity}x</span>
           <span class="text-right font-semibold">₹${totalPrice}</span>
           <button
@@ -245,82 +256,108 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function findMenuItemById(menuItemId) {
-    return document.querySelector(`.menu-item[data-id="${menuItemId}"]`);
-  }
-
   function syncQuantityToMainPage(uniqueKey, quantity) {
-    const [itemName, selectedWeight] = uniqueKey.split('-');
-    const menuItems = document.querySelectorAll('.menu-item');
+    try {
+      const [itemName, selectedWeight] = uniqueKey.split('-');
+      const menuItems = document.querySelectorAll('.menu-item');
 
-    menuItems.forEach(menuItem => {
-      const name = menuItem.querySelector('h3')?.textContent.trim();
-      const weightSelect = menuItem.querySelector('.pickle-quantity');
-      const weight = weightSelect ? weightSelect.value : 'Single';
+      menuItems.forEach(menuItem => {
+        const name = menuItem.querySelector('h3')?.textContent.trim();
+        const weightSelect = menuItem.querySelector('.pickle-quantity');
+        const weight = weightSelect ? weightSelect.value : 'Single';
 
-      if (name === itemName && weight === selectedWeight) {
-        const quantityDisplay = menuItem.querySelector('.quantity-display');
-        if (quantityDisplay) {
-          quantityDisplay.textContent = quantity;
+        if (name === itemName && weight === selectedWeight) {
+          const quantityDisplay = menuItem.querySelector('.quantity-display');
+          if (quantityDisplay) {
+            quantityDisplay.textContent = quantity;
+          }
+
+          // Reset controls for Small Size Oliga
+          if (itemName === "Small Size Oliga" && quantity === 0) {
+            const controlsContainer = document.createElement('div');
+            controlsContainer.id = "smallOligaControls";
+            controlsContainer.className = "quantity-control";
+            controlsContainer.innerHTML = `
+              <button
+                class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
+                onclick="addSmallOligaToCart(this)"
+              >
+                Add 50 to Cart
+              </button>
+            `;
+
+            const currentControls = menuItem.querySelector('.quantity-control');
+            if (currentControls) {
+              currentControls.replaceWith(controlsContainer);
+            }
+          }
         }
-
-        // Reset controls for Small Size Oliga
-        if (itemName === "Small Size Oliga" && quantity === 0) {
-          const controlsContainer = document.createElement('div');
-          controlsContainer.id = "smallOligaControls";
-          controlsContainer.className = "quantity-control";
-          controlsContainer.innerHTML = `
-            <button
-              class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
-              onclick="addSmallOligaToCart(this)"
-            >
-              Add 50 to Cart
-            </button>
-          `;
-
-          const currentControls = menuItem.querySelector('.quantity-control');
-          currentControls.replaceWith(controlsContainer);
-        }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error syncing quantity:", error);
+    }
   }
 
   function updateCartQuantityBadge() {
-    const cartItems = document.getElementById('cartItems');
-    const cartQuantityBadge = document.getElementById('cartQuantityBadge');
-    if (!cartItems || !cartQuantityBadge) return; // Ensure elements exist
+    try {
+      const cartQuantityBadge = document.getElementById('cartQuantityBadge');
+      if (!cartQuantityBadge) return;
 
-    const totalQuantity = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
+      const totalQuantity = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
 
-    if (totalQuantity > 0) {
-      cartQuantityBadge.textContent = totalQuantity;
-      cartQuantityBadge.classList.remove('hidden');
-    } else {
-      cartQuantityBadge.classList.add('hidden');
+      if (totalQuantity > 0) {
+        cartQuantityBadge.textContent = totalQuantity;
+        cartQuantityBadge.classList.remove('hidden');
+      } else {
+        cartQuantityBadge.classList.add('hidden');
+      }
+    } catch (error) {
+      console.error("Error updating cart badge:", error);
     }
   }
 
   function updateTotalPrice() {
-    const cartItems = document.getElementById('cartItems');
-    const totalPriceElement = document.getElementById('totalPrice');
-    if (!cartItems || !totalPriceElement) return; // Ensure elements exist
+    try {
+      const cartItems = document.getElementById('cartItems');
+      const totalPriceElement = document.getElementById('totalPrice');
+      if (!cartItems || !totalPriceElement) return;
 
-    let total = 0;
+      let total = 0;
 
-    Array.from(cartItems.children).forEach(item => {
-      const basePrice = parseInt(item.dataset.basePrice) || 0;
-      const quantity = parseInt(item.dataset.quantity) || 0;
-      total += basePrice * quantity;
-    });
+      Array.from(cartItems.children).forEach(item => {
+        const basePrice = parseInt(item.dataset.basePrice) || 0;
+        const quantity = parseInt(item.dataset.quantity) || 0;
+        total += basePrice * quantity;
+      });
 
-    totalPriceElement.textContent = `Total: ₹${total}`;
+      totalPriceElement.textContent = `Total: ₹${total}`;
+    } catch (error) {
+      console.error("Error updating total price:", error);
+    }
   }
 
   function toggleCartModal() {
-    const cartModal = document.getElementById("cartModal");
-    const mainContent = document.getElementById("mainContent");
-    cartModal.classList.toggle("hidden");
-    mainContent.classList.toggle("active");
+    try {
+      const cartModal = document.getElementById("cartModal");
+      const mainContent = document.getElementById("mainContent");
+      const body = document.body;
+      
+      if (cartModal && mainContent) {
+        cartModal.classList.toggle("hidden");
+        mainContent.classList.toggle("active");
+        
+        // Toggle body scroll locking
+        if (!cartModal.classList.contains("hidden")) {
+          // Modal is open - prevent scrolling
+          body.style.overflow = "hidden";
+        } else {
+          // Modal is closed - allow scrolling
+          body.style.overflow = "auto";
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling cart modal:", error);
+    }
   }
 
   function placeOrder() {
@@ -342,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const itemTotal = basePrice * quantity;
 
         totalPrice += itemTotal;
-        orderMessage += `${index + 1}. ${name}${weight ? ` (${weight})` : ''} x ${quantity}\n`;
+        orderMessage += `${index + 1}. ${name}${weight !== 'Single' ? ` (${weight})` : ''} x ${quantity}\n`;
       });
 
       orderMessage += `\n*Total Amount: ₹${totalPrice}*`;
@@ -381,7 +418,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Replace the "Add 50 to Cart" button with quantity controls
       const controlsContainer = menuItem.querySelector('#smallOligaControls');
-      controlsContainer.replaceWith(quantityDisplay);
+      if (controlsContainer) {
+        controlsContainer.replaceWith(quantityDisplay);
+      }
 
       // Update the cart immediately after adding
       updateCart(menuItem, 50);
@@ -429,15 +468,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Expose functions globally
-  function setupGlobalFunctions() {
-    window.changeQuantity = changeQuantity;
-    window.handleWeightChange = handleWeightChange;
-    window.toggleCartModal = toggleCartModal;
-    window.placeOrder = placeOrder;
-    window.addSmallOligaToCart = addSmallOligaToCart;
-    window.deleteCartItem = deleteCartItem;
-    window.deleteSmallOliga = deleteSmallOliga; // Added this line
-  }
-
-  setupGlobalFunctions();
+  window.changeQuantity = changeQuantity;
+  window.handleWeightChange = handleWeightChange;
+  window.toggleCartModal = toggleCartModal;
+  window.placeOrder = placeOrder;
+  window.addSmallOligaToCart = addSmallOligaToCart;
+  window.deleteCartItem = deleteCartItem;
+  window.deleteSmallOliga = deleteSmallOliga;
 });
