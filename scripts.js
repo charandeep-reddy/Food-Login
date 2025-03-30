@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
           cartItem.dataset.weight = selectedWeight;
           cartItem.dataset.basePrice = basePrice;
           cartItem.dataset.quantity = quantity;
-          cartItem.className = "grid grid-cols-4 items-center border-b pb-2";
+          cartItem.className = "grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] items-center border-b pb-2";
         } else {
           // Update existing item data
           cartItem.dataset.basePrice = basePrice;
@@ -213,14 +213,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         cartItem.innerHTML = `
-          <span class="font-semibold">${itemName}${selectedWeight !== 'Single' ? ` (${selectedWeight})` : ''}</span>
-          <span class="text-center font-semibold">${quantity}x</span>
-          <span class="text-right font-semibold">₹${totalPrice}</span>
+          <span class="font-semibold text-sm sm:text-base pr-1">${itemName}${selectedWeight !== 'Single' ? ` (${selectedWeight})` : ''}</span>
+          <span class="text-center font-semibold text-sm sm:text-base">${quantity}x</span>
+          <span class="text-right font-semibold text-sm sm:text-base">₹${totalPrice}</span>
           <button
-            class="text-red-500 hover:text-red-700 font-medium text-right"
+            class="text-red-500 hover:text-red-700 font-medium flex justify-end"
             onclick="deleteCartItem('${uniqueKey}')"
           >
-            <i class="fas fa-trash"></i>
+            <i class="fas fa-trash text-sm sm:text-base"></i>
           </button>
         `;
 
