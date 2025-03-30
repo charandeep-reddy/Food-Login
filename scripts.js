@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Cart functionality
   const cart = {}; // Store quantities for each unique item-weight combination
 
-  function changeQuantity(button, change) {
+  function changeQuantity(button, change, isSmallSizeCheck = false) {
     try {
       const menuItem = button.closest('.menu-item');
       if (!menuItem) return;
@@ -88,15 +88,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const uniqueKey = `${itemName}-${selectedWeight}`;
       const currentQuantity = cart[uniqueKey] || 0;
-      const newQuantity = Math.max(0, Math.min(99, currentQuantity + change)); // Add maximum limit
 
-      if (newQuantity === currentQuantity) return;
+      // Handle "Small Size Oliga" minimum quantity
+      const isSmallSizeOliga = itemName === "Small Size Oliga";
+      let newQuantity = currentQuantity + change;
+
+      if (isSmallSizeOliga) {
+        if (isSmallSizeCheck && currentQuantity === 0) {
+          newQuantity = 50; // Set default to 50 if user interacts
+        } else if (newQuantity < 50 && newQuantity > 0) {
+          alert("Minimum order quantity for Small Size Oliga is 50.");
+          return;
+        }
+      } else {
+        newQuantity = Math.max(0, Math.min(99, newQuantity)); // Default behavior for other items
+      }
 
       cart[uniqueKey] = newQuantity;
-      
+
       const quantityDisplay = button.parentElement.querySelector('.quantity-display');
       if (quantityDisplay) {
         quantityDisplay.textContent = newQuantity;
+      }
+
+      // Toggle between trash icon and - button for Small Size Oliga
+      if (isSmallSizeOliga) {
+        const decrementButton = button.parentElement.querySelector('.quantity-btn:first-child');
+        if (newQuantity === 50) {
+          decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
+          decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
+          decrementButton.onclick = () => deleteSmallOliga(decrementButton);
+        } else {
+          decrementButton.innerHTML = "-";
+          decrementButton.classList.remove("bg-red-500", "hover:bg-red-600", "text-white");
+          decrementButton.onclick = () => changeQuantity(decrementButton, -1);
+        }
       }
 
       updateCart(menuItem, newQuantity);
@@ -167,14 +193,20 @@ document.addEventListener("DOMContentLoaded", function () {
           cartItem.dataset.weight = selectedWeight;
           cartItem.dataset.basePrice = basePrice;
           cartItem.dataset.quantity = quantity;
-          cartItem.className = "flex justify-between items-center border-b pb-2 space-x-4";
+          cartItem.className = "grid grid-cols-4 items-center border-b pb-2";
         }
 
         cartItem.dataset.quantity = quantity;
         cartItem.innerHTML = `
-          <span class="flex-1 font-semibold">${itemName}${selectedWeight ? ` (${selectedWeight})` : ''}</span>
-          <span class="mx-4 text-center font-semibold">${quantity}x</span>
-          <span class="font-semibold">₹${totalPrice}</span>
+          <span class="font-semibold">${itemName}${selectedWeight ? ` (${selectedWeight})` : ''}</span>
+          <span class="text-center font-semibold">${quantity}x</span>
+          <span class="text-right font-semibold">₹${totalPrice}</span>
+          <button
+            class="text-red-500 hover:text-red-700 font-medium text-right"
+            onclick="deleteCartItem('${uniqueKey}')"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
         `;
 
         if (!cartItem.parentElement) {
@@ -186,6 +218,25 @@ document.addEventListener("DOMContentLoaded", function () {
       updateCartQuantityBadge();
     } catch (error) {
       console.error("Error updating cart:", error);
+    }
+  }
+
+  function deleteCartItem(uniqueKey) {
+    try {
+      const cartItems = document.getElementById('cartItems');
+      const cartItem = Array.from(cartItems.children).find(
+        item => item.dataset.key === uniqueKey
+      );
+
+      if (cartItem) {
+        cartItem.remove();
+        delete cart[uniqueKey];
+      }
+
+      updateTotalPrice();
+      updateCartQuantityBadge();
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
     }
   }
 
@@ -234,8 +285,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let total = 0;
 
     Array.from(cartItems.children).forEach(item => {
-      const priceMatch = item.querySelector('span:last-child')?.textContent.replace('₹', '');
-      if (priceMatch) total += parseInt(priceMatch);
+      const basePrice = parseInt(item.dataset.basePrice) || 0;
+      const quantity = parseInt(item.dataset.quantity) || 0;
+      total += basePrice * quantity;
     });
 
     totalPriceElement.textContent = `Total: ₹${total}`;
@@ -279,9 +331,80 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function addSmallOligaToCart(button) {
+    try {
+      const menuItem = button.closest('.menu-item');
+      if (!menuItem) return;
+
+      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      if (!itemName) return;
+
+      const uniqueKey = `${itemName}-Single`;
+      const quantityDisplay = document.createElement('div');
+      quantityDisplay.className = "quantity-control";
+
+      // Set initial quantity to 50
+      cart[uniqueKey] = 50;
+
+      quantityDisplay.innerHTML = `
+        <button class="quantity-btn bg-red-500 text-white hover:bg-red-600" onclick="deleteSmallOliga(this)">
+          <i class="fas fa-trash"></i>
+        </button>
+        <span class="quantity-display">50</span>
+        <button class="quantity-btn" onclick="changeQuantity(this, 1)">
+          +
+        </button>
+      `;
+
+      // Replace the "Add 50 to Cart" button with quantity controls
+      const controlsContainer = menuItem.querySelector('#smallOligaControls');
+      controlsContainer.replaceWith(quantityDisplay);
+
+      updateCart(menuItem, 50);
+    } catch (error) {
+      console.error("Error adding Small Size Oliga to cart:", error);
+    }
+  }
+
+  function deleteSmallOliga(button) {
+    try {
+      const menuItem = button.closest('.menu-item');
+      if (!menuItem) return;
+
+      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      if (!itemName) return;
+
+      const uniqueKey = `${itemName}-Single`;
+
+      // Remove the item from the cart
+      delete cart[uniqueKey];
+      updateCart(menuItem, 0);
+
+      // Reset the controls to "Add 50 to Cart"
+      const controlsContainer = document.createElement('div');
+      controlsContainer.id = "smallOligaControls";
+      controlsContainer.className = "quantity-control";
+      controlsContainer.innerHTML = `
+        <button
+          class="bg-food-yellow text-white px-4 py-2 rounded-full font-medium hover:bg-yellow-500 transition"
+          onclick="addSmallOligaToCart(this)"
+        >
+          Add 50 to Cart
+        </button>
+      `;
+
+      const currentControls = menuItem.querySelector('.quantity-control');
+      currentControls.replaceWith(controlsContainer);
+    } catch (error) {
+      console.error("Error deleting Small Size Oliga from cart:", error);
+    }
+  }
+
   // Expose functions globally
   window.changeQuantity = changeQuantity;
   window.handleWeightChange = handleWeightChange;
   window.toggleCartModal = toggleCartModal;
   window.placeOrder = placeOrder;
+  window.addSmallOligaToCart = addSmallOligaToCart;
+  window.deleteCartItem = deleteCartItem;
 });
