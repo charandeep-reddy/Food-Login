@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const itemTotal = basePrice * quantity;
 
         totalPrice += itemTotal;
-        orderMessage += `${index + 1}. ${name}${weight ? ` (${weight})` : ''} x ${quantity} = ₹${itemTotal}\n`;
+        orderMessage += `${index + 1}. ${name}${weight ? ` (${weight})` : ''} x ${quantity}`;
       });
 
       orderMessage += `\n*Total Amount: ₹${totalPrice}*`;
