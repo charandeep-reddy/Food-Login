@@ -246,9 +246,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (cartItem) {
         cartItem.remove();
         delete cart[uniqueKey];
+        
+        // Always call syncQuantityToMainPage when an item is deleted
+        syncQuantityToMainPage(uniqueKey, 0);
       }
 
-      syncQuantityToMainPage(uniqueKey, 0); // Sync menu with cart
       updateTotalPrice();
       updateCartQuantityBadge();
     } catch (error) {
@@ -258,22 +260,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function syncQuantityToMainPage(uniqueKey, quantity) {
     try {
-      const [itemName, selectedWeight] = uniqueKey.split('-');
+      // For debugging
+      console.log(`Syncing ${uniqueKey} to quantity ${quantity}`);
+      
       const menuItems = document.querySelectorAll('.menu-item');
 
       menuItems.forEach(menuItem => {
-        const name = menuItem.querySelector('h3')?.textContent.trim();
+        const name = menuItem.querySelector('h3')?.textContent.trim();      
         const weightSelect = menuItem.querySelector('.pickle-quantity');
         const weight = weightSelect ? weightSelect.value : 'Single';
-
-        if (name === itemName && weight === selectedWeight) {
+        
+        // Create this menu item's key
+        const thisItemKey = `${name}-${weight}`;
+        
+        // Compare with uniqueKey - they should be identical for matching items
+        if (thisItemKey === uniqueKey) {
           const quantityDisplay = menuItem.querySelector('.quantity-display');
           if (quantityDisplay) {
             quantityDisplay.textContent = quantity;
           }
 
           // Reset controls for Small Size Oliga
-          if (itemName === "Small Size Oliga" && quantity === 0) {
+          if (name === "Small Size Oliga" && quantity === 0) {
             const controlsContainer = document.createElement('div');
             controlsContainer.id = "smallOligaControls";
             controlsContainer.className = "quantity-control";
