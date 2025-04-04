@@ -145,6 +145,7 @@
         animation: fadeIn 0.3s ease-in-out;
         backdrop-filter: blur(8px);
         overflow-y: auto;
+        z-index: 100;
       }
 
       @keyframes fadeIn {
@@ -161,9 +162,11 @@
       /* Modal body scroll handling */
       body.modal-open {
         overflow: hidden;
-        position: fixed;
         width: 100%;
+        position: fixed;
         height: 100%;
+        top: 0;
+        left: 0;
       }
 
       /* Add subtle hover effect for menu items */
@@ -283,6 +286,54 @@
       .scroll-top-btn {
         display: none; /* Hide the button instead of removing the style completely */
       }
+
+      /* Trending tag styles */
+      .trending-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
+        z-index: 10;
+        animation: glowing 1.5s infinite;
+      }
+
+      /* Best seller tag styles */
+      .best-seller-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(
+          45deg,
+          #ff6b6b,
+          #ffd93d
+        ); /* Changed to match trending tag */
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4); /* Updated shadow color */
+        z-index: 10;
+        animation: glowing 1.5s infinite;
+      }
+
+      @keyframes glowing {
+        0% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+        50% {
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px currentColor;
+        }
+        100% {
+          box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px currentColor;
+        }
+      }
     </style>
   </head>
   <body class="bg-white text-gray-800">
@@ -296,7 +347,9 @@
             <span class="navbar-logo">
               <img src="images/food-login.webp" alt="Food Login Logo" />
             </span>
-            <h1 class="text-2xl md:text-3xl font-bold text-white tracking-wide ml-3">
+            <h1
+              class="text-2xl md:text-3xl font-bold text-white tracking-wide ml-3"
+            >
               Food Login
             </h1>
           </div>
@@ -366,12 +419,19 @@
       >
         <div class="container mx-auto px-4 text-center">
           <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Tasty Homemade <span class="text-2xl text-food-yellow">Rayalaseema Food</span>
+            Tasty Homemade
+            <span class="text-2xl text-food-yellow">Rayalaseema Food</span>
           </h2>
-          <p class="text-lg mb-8 text-gray-700 font-light leading-relaxed max-w-2xl mx-auto">
-            At Foodlogin_8, we use only the best, locally sourced ingredients to make our Chenikkaya Oliga and non-veg pickles. Every product is crafted with care to bring out authentic Rayalaseema flavors.
+          <p
+            class="text-lg mb-8 text-gray-700 font-light leading-relaxed max-w-2xl mx-auto"
+          >
+            At Foodlogin_8, we use only the best, locally sourced ingredients to
+            make our Chenikkaya Oliga and non-veg pickles. Every product is
+            crafted with care to bring out authentic Rayalaseema flavors.
           </p>
-          <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+          <div
+            class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
+          >
             <a
               href="#menu"
               class="bg-food-yellow text-white px-6 py-3 rounded-full font-medium hover:bg-yellow-500 transition text-center tracking-wide"
@@ -403,10 +463,13 @@
             </div>
             <div class="md:w-2/3 md:pl-12">
               <p class="text-lg mb-6 leading-relaxed">
-                Hello food lovers! Welcome to Foodlogin_8! This is your place to discover yummy food, especially if you love Rayalaseema flavors.
+                Hello food lovers! Welcome to Foodlogin_8! This is your place to
+                discover yummy food, especially if you love Rayalaseema flavors.
               </p>
               <p class="text-lg mb-6 leading-relaxed">
-                One of my highlights is Chenikkaya Oliga. I also offer non-veg pickles, crafted with traditional recipes that bring out the authentic taste of Rayalaseema.
+                One of my highlights is Chenikkaya Oliga. I also offer non-veg
+                pickles, crafted with traditional recipes that bring out the
+                authentic taste of Rayalaseema.
               </p>
             </div>
           </div>
@@ -429,7 +492,9 @@
             recipes.
           </p>
           <div class="text-center mb-8">
-            <p class="bg-food-yellow text-white font-bold text-lg md:text-xl py-3 px-6 rounded-lg shadow-lg inline-block">
+            <p
+              class="bg-food-yellow text-white font-bold text-lg md:text-xl py-3 px-6 rounded-lg shadow-lg inline-block"
+            >
               Free home delivery on orders above 20 Oliga!
             </p>
           </div>
@@ -477,10 +542,13 @@
           >
             <!-- Oliga Section -->
             <div
-              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
               data-category="oliga"
               data-id="oliga-normal"
             >
+              <span class="best-seller-tag">
+                <i class="fas fa-crown mr-1"></i>Best Seller
+              </span>
               <img
                 src="images/oliga.webp"
                 alt="Chenikkaya Normal Oliga"
@@ -591,11 +659,24 @@
                 <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                   Food-Login Special Mix Oliga
                 </h3>
-                <span class="text-food-yellow font-bold text-[16px] md:text-base">₹50</span>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹50</span
+                >
                 <div class="quantity-control">
-                  <button class="quantity-btn" onclick="changeQuantity(this, -1)">-</button>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
                   <span class="quantity-display">0</span>
-                  <button class="quantity-btn" onclick="changeQuantity(this, 1)">+</button>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
             </div>
@@ -606,7 +687,7 @@
               data-id="special-mix-oliga-ghee"
             >
               <img
-              src="images/special-oliga.webp"
+                src="images/special-oliga.webp"
                 alt="Food-Login Special Mix Oliga (Ghee)"
                 class="w-full h-28 md:h-40 object-cover"
               />
@@ -614,21 +695,37 @@
                 <h3 class="text-sm md:text-lg font-semibold mb-1 md:mb-2">
                   Food-Login Special Mix Oliga (Ghee)
                 </h3>
-                <span class="text-food-yellow font-bold text-[16px] md:text-base">₹60</span>
+                <span
+                  class="text-food-yellow font-bold text-[16px] md:text-base"
+                  >₹60</span
+                >
                 <div class="quantity-control">
-                  <button class="quantity-btn" onclick="changeQuantity(this, -1)">-</button>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, -1)"
+                  >
+                    -
+                  </button>
                   <span class="quantity-display">0</span>
-                  <button class="quantity-btn" onclick="changeQuantity(this, 1)">+</button>
+                  <button
+                    class="quantity-btn"
+                    onclick="changeQuantity(this, 1)"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
             </div>
 
             <!-- Non-Veg Pickle Section -->
             <div
-              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full"
+              class="menu-item bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition transform hover:-translate-y-1 duration-200 max-w-xs mx-auto w-full relative"
               data-category="non-veg-pickle"
               data-id="chicken-pickle"
             >
+              <span class="trending-tag">
+                <i class="fas fa-fire-alt mr-1"></i>Trending
+              </span>
               <img
                 src="images/chicken-pickle.webp"
                 alt="Chicken Pickle"
@@ -644,6 +741,7 @@
                     class="pickle-quantity w-full md:w-auto"
                     onchange="handleWeightChange(this)"
                   >
+                    <option value="100g" data-price="140">100g - ₹140</option>
                     <option value="250g" data-price="249">250g - ₹249</option>
                     <option value="500g" data-price="499">500g - ₹499</option>
                     <option value="1kg" data-price="999">1kg - ₹999</option>
@@ -867,20 +965,29 @@
         >
           <i class="fas fa-times text-xl"></i>
         </button>
-        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center text-food-yellow">
+        <h3
+          class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center text-food-yellow"
+        >
           Your Cart
         </h3>
-        <div class="grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] font-bold text-gray-700 mb-2 text-sm sm:text-base">
+        <div
+          class="grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] font-bold text-gray-700 mb-2 text-sm sm:text-base"
+        >
           <span>Item</span>
           <span class="text-center">Qty</span>
           <span class="text-right">Price</span>
-          <span class="text-right"></span> <!-- Blank heading for Delete column -->
+          <span class="text-right"></span>
+          <!-- Blank heading for Delete column -->
         </div>
         <div id="cartItems" class="space-y-3 sm:space-y-4">
           <!-- Cart items will be dynamically added here -->
         </div>
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 sm:mt-6">
-          <span id="totalPrice" class="text-base sm:text-lg font-bold text-gray-800"
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 sm:mt-6"
+        >
+          <span
+            id="totalPrice"
+            class="text-base sm:text-lg font-bold text-gray-800"
             >Total: ₹0</span
           >
           <button

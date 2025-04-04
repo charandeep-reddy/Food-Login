@@ -80,12 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function changeQuantity(button, change, isSmallSizeCheck = false) {
     try {
-      const menuItem = button.closest('.menu-item');
+      const menuItem = button.closest(".menu-item");
       if (!menuItem) return;
 
-      const weightSelect = menuItem.querySelector('.pickle-quantity');
-      const selectedWeight = weightSelect ? weightSelect.value : 'Single';
-      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      const weightSelect = menuItem.querySelector(".pickle-quantity");
+      const selectedWeight = weightSelect ? weightSelect.value : "Single";
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
       if (!itemName) return;
 
       const uniqueKey = `${itemName}-${selectedWeight}`;
@@ -108,17 +108,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       cart[uniqueKey] = newQuantity;
 
-      const quantityDisplay = button.parentElement.querySelector('.quantity-display');
+      const quantityDisplay =
+        button.parentElement.querySelector(".quantity-display");
       if (quantityDisplay) {
         quantityDisplay.textContent = newQuantity;
       }
 
       // Ensure the delete button is always functional for Small Size Oliga
       if (isSmallSizeOliga) {
-        const decrementButton = button.parentElement.querySelector('.quantity-btn:first-child');
+        const decrementButton = button.parentElement.querySelector(
+          ".quantity-btn:first-child"
+        );
         if (decrementButton) {
           decrementButton.innerHTML = `<i class="fas fa-trash"></i>`;
-          decrementButton.classList.add("bg-red-500", "hover:bg-red-600", "text-white");
+          decrementButton.classList.add(
+            "bg-red-500",
+            "hover:bg-red-600",
+            "text-white"
+          );
           decrementButton.onclick = () => deleteSmallOliga(decrementButton);
         }
       }
@@ -131,17 +138,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function handleWeightChange(selectElement) {
     try {
-      const menuItem = selectElement.closest('.menu-item');
+      const menuItem = selectElement.closest(".menu-item");
       if (!menuItem) return;
 
       const selectedWeight = selectElement.value;
-      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
       if (!itemName) return;
 
       const uniqueKey = `${itemName}-${selectedWeight}`;
       const storedQuantity = cart[uniqueKey] || 0;
 
-      const quantityDisplay = menuItem.querySelector('.quantity-display');
+      const quantityDisplay = menuItem.querySelector(".quantity-display");
       if (quantityDisplay) {
         quantityDisplay.textContent = storedQuantity;
       }
@@ -152,14 +159,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateCart(menuItem, quantity) {
     try {
-      const cartItems = document.getElementById('cartItems');
+      const cartItems = document.getElementById("cartItems");
       if (!cartItems) return;
 
-      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
       if (!itemName) return;
 
-      const weightSelect = menuItem.querySelector('.pickle-quantity');
-      const selectedWeight = weightSelect ? weightSelect.value : 'Single';
+      const weightSelect = menuItem.querySelector(".pickle-quantity");
+      const selectedWeight = weightSelect ? weightSelect.value : "Single";
       const uniqueKey = `${itemName}-${selectedWeight}`;
 
       // Get price directly from HTML
@@ -175,20 +182,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       } else {
         // For regular items
-        const priceText = menuItem.querySelector('.text-food-yellow')?.textContent;
-        
+        const priceText =
+          menuItem.querySelector(".text-food-yellow")?.textContent;
+
         // Handle "Each ₹X" format for Small Size Oliga
         if (priceText && priceText.includes("Each")) {
-          basePrice = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+          basePrice = parseInt(priceText.replace(/[^0-9]/g, "")) || 0;
         } else {
-          basePrice = parseInt(priceText?.replace(/[^0-9]/g, '')) || 0;
+          basePrice = parseInt(priceText?.replace(/[^0-9]/g, "")) || 0;
         }
       }
 
       const totalPrice = basePrice * quantity;
 
       let cartItem = Array.from(cartItems.children).find(
-        item => item.dataset.key === uniqueKey
+        (item) => item.dataset.key === uniqueKey
       );
 
       if (quantity <= 0) {
@@ -199,13 +207,14 @@ document.addEventListener("DOMContentLoaded", function () {
         syncQuantityToMainPage(uniqueKey, 0); // Sync menu with cart
       } else {
         if (!cartItem) {
-          cartItem = document.createElement('div');
+          cartItem = document.createElement("div");
           cartItem.dataset.key = uniqueKey;
           cartItem.dataset.name = itemName;
           cartItem.dataset.weight = selectedWeight;
           cartItem.dataset.basePrice = basePrice;
           cartItem.dataset.quantity = quantity;
-          cartItem.className = "grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] items-center border-b pb-2";
+          cartItem.className =
+            "grid grid-cols-[2fr_0.7fr_0.8fr_0.3fr] items-center border-b pb-2";
         } else {
           // Update existing item data
           cartItem.dataset.basePrice = basePrice;
@@ -213,7 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         cartItem.innerHTML = `
-          <span class="font-semibold text-sm sm:text-base pr-1">${itemName}${selectedWeight !== 'Single' ? ` (${selectedWeight})` : ''}</span>
+          <span class="font-semibold text-sm sm:text-base pr-1">${itemName}${
+          selectedWeight !== "Single" ? ` (${selectedWeight})` : ""
+        }</span>
           <span class="text-center font-semibold text-sm sm:text-base">${quantity}x</span>
           <span class="text-right font-semibold text-sm sm:text-base">₹${totalPrice}</span>
           <button
@@ -238,15 +249,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function deleteCartItem(uniqueKey) {
     try {
-      const cartItems = document.getElementById('cartItems');
+      const cartItems = document.getElementById("cartItems");
       const cartItem = Array.from(cartItems.children).find(
-        item => item.dataset.key === uniqueKey
+        (item) => item.dataset.key === uniqueKey
       );
 
       if (cartItem) {
         cartItem.remove();
         delete cart[uniqueKey];
-        
+
         // Always call syncQuantityToMainPage when an item is deleted
         syncQuantityToMainPage(uniqueKey, 0);
       }
@@ -260,29 +271,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function syncQuantityToMainPage(uniqueKey, quantity) {
     try {
-      // For debugging
-      console.log(`Syncing ${uniqueKey} to quantity ${quantity}`);
-      
-      const menuItems = document.querySelectorAll('.menu-item');
+      const menuItems = document.querySelectorAll(".menu-item");
 
-      menuItems.forEach(menuItem => {
-        const name = menuItem.querySelector('h3')?.textContent.trim();      
-        const weightSelect = menuItem.querySelector('.pickle-quantity');
-        const weight = weightSelect ? weightSelect.value : 'Single';
-        
-        // Create this menu item's key
+      menuItems.forEach((menuItem) => {
+        const name = menuItem.querySelector("h3")?.textContent.trim();
+        const weightSelect = menuItem.querySelector(".pickle-quantity");
+        const weight = weightSelect ? weightSelect.value : "Single";
         const thisItemKey = `${name}-${weight}`;
-        
-        // Compare with uniqueKey - they should be identical for matching items
+
         if (thisItemKey === uniqueKey) {
-          const quantityDisplay = menuItem.querySelector('.quantity-display');
+          const quantityDisplay = menuItem.querySelector(".quantity-display");
           if (quantityDisplay) {
             quantityDisplay.textContent = quantity;
+
+            // Also update the weight select if it exists
+            if (weightSelect) {
+              handleWeightChange(weightSelect);
+            }
           }
 
           // Reset controls for Small Size Oliga
           if (name === "Small Size Oliga" && quantity === 0) {
-            const controlsContainer = document.createElement('div');
+            const controlsContainer = document.createElement("div");
             controlsContainer.id = "smallOligaControls";
             controlsContainer.className = "quantity-control";
             controlsContainer.innerHTML = `
@@ -294,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </button>
             `;
 
-            const currentControls = menuItem.querySelector('.quantity-control');
+            const currentControls = menuItem.querySelector(".quantity-control");
             if (currentControls) {
               currentControls.replaceWith(controlsContainer);
             }
@@ -308,16 +318,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateCartQuantityBadge() {
     try {
-      const cartQuantityBadge = document.getElementById('cartQuantityBadge');
+      const cartQuantityBadge = document.getElementById("cartQuantityBadge");
       if (!cartQuantityBadge) return;
 
-      const totalQuantity = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
+      const totalQuantity = Object.values(cart).reduce(
+        (sum, quantity) => sum + quantity,
+        0
+      );
 
       if (totalQuantity > 0) {
         cartQuantityBadge.textContent = totalQuantity;
-        cartQuantityBadge.classList.remove('hidden');
+        cartQuantityBadge.classList.remove("hidden");
       } else {
-        cartQuantityBadge.classList.add('hidden');
+        cartQuantityBadge.classList.add("hidden");
       }
     } catch (error) {
       console.error("Error updating cart badge:", error);
@@ -326,13 +339,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateTotalPrice() {
     try {
-      const cartItems = document.getElementById('cartItems');
-      const totalPriceElement = document.getElementById('totalPrice');
+      const cartItems = document.getElementById("cartItems");
+      const totalPriceElement = document.getElementById("totalPrice");
       if (!cartItems || !totalPriceElement) return;
 
       let total = 0;
 
-      Array.from(cartItems.children).forEach(item => {
+      Array.from(cartItems.children).forEach((item) => {
         const basePrice = parseInt(item.dataset.basePrice) || 0;
         const quantity = parseInt(item.dataset.quantity) || 0;
         total += basePrice * quantity;
@@ -349,18 +362,20 @@ document.addEventListener("DOMContentLoaded", function () {
       const cartModal = document.getElementById("cartModal");
       const mainContent = document.getElementById("mainContent");
       const body = document.body;
-      
+
       if (cartModal && mainContent) {
         cartModal.classList.toggle("hidden");
         mainContent.classList.toggle("active");
-        
-        // Toggle body scroll locking
+        body.classList.toggle("modal-open"); // Add this class toggle
+
+        // Store scroll position when opening modal
         if (!cartModal.classList.contains("hidden")) {
-          // Modal is open - prevent scrolling
-          body.style.overflow = "hidden";
+          body.style.top = `-${window.scrollY}px`;
         } else {
-          // Modal is closed - allow scrolling
-          body.style.overflow = "auto";
+          // Restore scroll position when closing
+          const scrollY = parseInt(document.body.style.top || "0");
+          body.style.top = "";
+          window.scrollTo(0, Math.abs(scrollY));
         }
       }
     } catch (error) {
@@ -370,7 +385,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function placeOrder() {
     try {
-      const cartItems = document.getElementById('cartItems');
+      const cartItems = document.getElementById("cartItems");
       if (!cartItems?.children.length) {
         alert("Your cart is empty. Please add items to place an order.");
         return;
@@ -387,12 +402,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const itemTotal = basePrice * quantity;
 
         totalPrice += itemTotal;
-        orderMessage += `${index + 1}. ${name}${weight !== 'Single' ? ` (${weight})` : ''} x ${quantity}\n`;
+        orderMessage += `${index + 1}. ${name}${
+          weight !== "Single" ? ` (${weight})` : ""
+        } x ${quantity}\n`;
       });
 
       orderMessage += `\n*Total Amount: ₹${totalPrice}*`;
       const encodedMessage = encodeURIComponent(orderMessage);
-      window.open(`https://wa.me/916301972788?text=${encodedMessage}`, "_blank");
+      window.open(
+        `https://wa.me/916301972788?text=${encodedMessage}`,
+        "_blank"
+      );
     } catch (error) {
       console.error("Error placing order:", error);
       alert("There was an error placing your order. Please try again.");
@@ -401,14 +421,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addSmallOligaToCart(button) {
     try {
-      const menuItem = button.closest('.menu-item');
+      const menuItem = button.closest(".menu-item");
       if (!menuItem) return;
 
-      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
       if (!itemName) return;
 
       const uniqueKey = `${itemName}-Single`;
-      const quantityDisplay = document.createElement('div');
+      const quantityDisplay = document.createElement("div");
       quantityDisplay.className = "quantity-control";
 
       // Set initial quantity to 50
@@ -425,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
       `;
 
       // Replace the "Add 50 to Cart" button with quantity controls
-      const controlsContainer = menuItem.querySelector('#smallOligaControls');
+      const controlsContainer = menuItem.querySelector("#smallOligaControls");
       if (controlsContainer) {
         controlsContainer.replaceWith(quantityDisplay);
       }
@@ -439,10 +459,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function deleteSmallOliga(button) {
     try {
-      const menuItem = button.closest('.menu-item');
+      const menuItem = button.closest(".menu-item");
       if (!menuItem) return;
 
-      const itemName = menuItem.querySelector('h3')?.textContent.trim();
+      const itemName = menuItem.querySelector("h3")?.textContent.trim();
       if (!itemName) return;
 
       const uniqueKey = `${itemName}-Single`;
@@ -451,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
       delete cart[uniqueKey];
 
       // Reset the controls to "Add 50 to Cart" before updating the cart
-      const controlsContainer = document.createElement('div');
+      const controlsContainer = document.createElement("div");
       controlsContainer.id = "smallOligaControls";
       controlsContainer.className = "quantity-control";
       controlsContainer.innerHTML = `
@@ -463,7 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </button>
       `;
 
-      const currentControls = menuItem.querySelector('.quantity-control');
+      const currentControls = menuItem.querySelector(".quantity-control");
       if (currentControls) {
         currentControls.replaceWith(controlsContainer);
       }
